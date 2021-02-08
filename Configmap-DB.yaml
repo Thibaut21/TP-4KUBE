@@ -1,0 +1,12 @@
+apiVersion: v1 
+kind: ConfigMap 
+metadata:
+  name: foruminfo
+  namespace: 4kube
+data:
+  PRESTASHOP_FIRST_NAME: Thibaut
+  PRESTASHOP_LAST_NAME: GARON
+  PRESTASHOP_EMAIL: thibaut.garon@supinfo.com
+  ALLOW_EMPTY_PASSWORD: 'yes'
+  PRESTASHOP_HOST: 192.168.150.141
+  PRESTASHOP_ENABLE_HTTPS: 'no'

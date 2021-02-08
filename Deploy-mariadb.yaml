@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mariadb
+  name: mariadb
+  namespace: 4kube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mariadb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mariadb
+    spec:
+      hostname: mariadb
+      volumes:
+      - name: mariadbpersist
+        persistentVolumeClaim:
+          claimName: mariadb-claim
+      - name: auth
+        secret:
+          secretName: secretdb
+      containers:
+      - image: bitnami/mariadb:10.1
+        name: mariadb
+        volumeMounts:
+        - mountPath: /bitnami/mariadb
+          name: mariadbpersist
+        env:
+        - name: MARIADB_USER
+          valueFrom:
+            secretKeyRef:
+              name: secret4kube
+              key: MARIADB_USER
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret4kube
+              key: MARIADB_PASSWORD
+        - name: MARIADB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              name: secret4kube
+              key: MARIADB_DATABASE
+        - name: ALLOW_EMPTY_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: foruminfo
+              key: ALLOW_EMPTY_PASSWORD
+        ports:
+        - containerPort: 3306
+          name: mariadb

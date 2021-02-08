@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: prestashop
+  name: prestashop
+  namespace: 4kube
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prestashop
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: prestashop
+    spec:
+      hostname: prestashop
+      volumes:
+      - name: persistentpvc
+        persistentVolumeClaim:
+          claimName: presta-claim
+      containers:
+      - image: bitnami/prestashop:1.7
+        name: prestashop
+        volumeMounts:
+        - mountPath: /bitnami/prestashop
+          name: persistentpvc
+        env:
+        - name: PRESTASHOP_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: secret4kube
+              key: PRESTASHOP_DATABASE_PASSWORD
+        - name: ALLOW_EMPTY_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              name: foruminfo
+              key: ALLOW_EMPTY_PASSWORD
+        - name: PRESTASHOP_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: foruminfo
+              key: PRESTASHOP_HOST
+        - name: PRESTASHOP_ENABLE_HTTPS
+          valueFrom:
+            configMapKeyRef:
+              name: foruminfo
+              key: PRESTASHOP_ENABLE_HTTPS
+        - name: PRESTASHOP_FIRST_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: foruminfo
+              key: PRESTASHOP_FIRST_NAME
+        - name: PRESTASHOP_LAST_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: foruminfo
+              key: PRESTASHOP_LAST_NAME
+        - name: PRESTASHOP_EMAIL
+          valueFrom:
+            configMapKeyRef:
+              name: foruminfo
+              key: PRESTASHOP_EMAIL
+        ports:
+        - containerPort: 8080
+          name: prestashop
